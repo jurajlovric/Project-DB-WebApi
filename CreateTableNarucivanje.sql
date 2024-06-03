@@ -15,3 +15,6 @@ CREATE TABLE "Order" (
         ON DELETE CASCADE
 );
 
+INSERT INTO "Order" ("Id", "CustomerId", "OrderDate", "Amount")
+VALUES (uuid_generate_v4(), 'f786a13d-4373-45c2-bbfd-a62c93a12e5b', '2024-06-03', 150.00);
+

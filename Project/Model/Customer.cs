@@ -1,4 +1,4 @@
-﻿namespace Project_WebApi
+﻿namespace Project.Model
 {
     public class Customer
     {

@@ -2,6 +2,7 @@
 using Project.Repository;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Project.Service
 {
@@ -14,30 +15,30 @@ namespace Project.Service
             _customerRepository = customerRepository;
         }
 
-        public IEnumerable<Customer> GetCustomers()
+        public async Task<IEnumerable<Customer>> GetCustomersAsync()
         {
-            return _customerRepository.GetCustomers();
+            return await _customerRepository.GetCustomersAsync();
         }
 
-        public Customer GetCustomerById(Guid id)
+        public async Task<Customer> GetCustomerByIdAsync(Guid id)
         {
-            return _customerRepository.GetCustomerById(id);
+            return await _customerRepository.GetCustomerByIdAsync(id);
         }
 
-        public void AddCustomer(Customer customer)
+        public async Task AddCustomerAsync(Customer customer)
         {
             customer.Id = Guid.NewGuid();
-            _customerRepository.AddCustomer(customer);
+            await _customerRepository.AddCustomerAsync(customer);
         }
 
-        public void UpdateCustomer(Customer customer)
+        public async Task UpdateCustomerAsync(Customer customer)
         {
-            _customerRepository.UpdateCustomer(customer);
+            await _customerRepository.UpdateCustomerAsync(customer);
         }
 
-        public void DeleteCustomer(Guid id)
+        public async Task DeleteCustomerAsync(Guid id)
         {
-            _customerRepository.DeleteCustomer(id);
+            await _customerRepository.DeleteCustomerAsync(id);
         }
     }
 }

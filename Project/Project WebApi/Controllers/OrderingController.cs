@@ -2,7 +2,9 @@
 using Project.Model;
 using Project.Service;
 using Project.Repository;
-
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Project.WebApi.Controllers
 {
@@ -14,21 +16,21 @@ namespace Project.WebApi.Controllers
 
         public OrdersController()
         {
-            string connectionString = "Host=localhost;Port=5432;Database=Order;User Id=postgres;Password=postgres";
+            string connectionString = "Host=localhost;Port=5432;Database=Order;User Id=postgres;Password=postgres;";
             ICustomerRepository customerRepository = new CustomerRepository(connectionString);
             _customerService = new CustomerService(customerRepository);
         }
 
         [HttpGet("customers")]
-        public ActionResult<IEnumerable<Customer>> GetCustomers()
+        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomersAsync()
         {
-            return Ok(_customerService.GetCustomers());
+            return Ok(await _customerService.GetCustomersAsync());
         }
 
         [HttpGet("customers/{id}")]
-        public ActionResult<Customer> GetCustomer(Guid id)
+        public async Task<ActionResult<Customer>> GetCustomerAsync(Guid id)
         {
-            var customer = _customerService.GetCustomerById(id);
+            var customer = await _customerService.GetCustomerByIdAsync(id);
             if (customer == null)
             {
                 return NotFound();
@@ -37,32 +39,32 @@ namespace Project.WebApi.Controllers
         }
 
         [HttpPost("customers")]
-        public ActionResult<Customer> PostCustomer(Customer customer)
+        public async Task<ActionResult<Customer>> PostCustomerAsync(Customer customer)
         {
-            _customerService.AddCustomer(customer);
-            return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
+            await _customerService.AddCustomerAsync(customer);
+            return CreatedAtAction(nameof(GetCustomerAsync), new { id = customer.Id }, customer);
         }
 
         [HttpPut("customers/{id}")]
-        public IActionResult PutCustomer(Guid id, Customer customer)
+        public async Task<IActionResult> PutCustomerAsync(Guid id, Customer customer)
         {
             if (id != customer.Id)
             {
                 return BadRequest();
             }
-            _customerService.UpdateCustomer(customer);
+            await _customerService.UpdateCustomerAsync(customer);
             return NoContent();
         }
 
         [HttpDelete("customers/{id}")]
-        public IActionResult DeleteCustomer(Guid id)
+        public async Task<IActionResult> DeleteCustomerAsync(Guid id)
         {
-            var customer = _customerService.GetCustomerById(id);
+            var customer = await _customerService.GetCustomerByIdAsync(id);
             if (customer == null)
             {
                 return NotFound();
             }
-            _customerService.DeleteCustomer(id);
+            await _customerService.DeleteCustomerAsync(id);
             return NoContent();
         }
     }

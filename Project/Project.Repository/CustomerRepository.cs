@@ -1,6 +1,7 @@
 ﻿using Project.Model;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Npgsql;
 
 namespace Project.Repository
@@ -14,16 +15,16 @@ namespace Project.Repository
             _connectionString = connectionString;
         }
 
-        public IEnumerable<Customer> GetCustomers()
+        public async Task<IEnumerable<Customer>> GetCustomersAsync()
         {
             var customers = new List<Customer>();
             using (var conn = new NpgsqlConnection(_connectionString))
             {
                 conn.Open();
                 using (var command = new NpgsqlCommand("SELECT * FROM \"Customer\"", conn))
-                using (var reader = command.ExecuteReader())
+                using (var reader = await command.ExecuteReaderAsync())
                 {
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         customers.Add(new Customer
                         {
@@ -38,7 +39,7 @@ namespace Project.Repository
             return customers;
         }
 
-        public Customer GetCustomerById(Guid id)
+        public async Task<Customer> GetCustomerByIdAsync(Guid id)
         {
             Customer customer = null;
             using (var conn = new NpgsqlConnection(_connectionString))
@@ -47,9 +48,9 @@ namespace Project.Repository
                 using (var command = new NpgsqlCommand("SELECT * FROM \"Customer\" WHERE \"Id\" = @Id", conn))
                 {
                     command.Parameters.AddWithValue("Id", id);
-                    using (var reader = command.ExecuteReader())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync())
                         {
                             customer = new Customer
                             {
@@ -65,7 +66,7 @@ namespace Project.Repository
             return customer;
         }
 
-        public void AddCustomer(Customer customer)
+        public async Task AddCustomerAsync(Customer customer)
         {
             using (var conn = new NpgsqlConnection(_connectionString))
             {
@@ -77,12 +78,12 @@ namespace Project.Repository
                     command.Parameters.AddWithValue("FirstName", customer.FirstName);
                     command.Parameters.AddWithValue("LastName", customer.LastName);
                     command.Parameters.AddWithValue("Email", customer.Email);
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
         }
 
-        public void UpdateCustomer(Customer customer)
+        public async Task UpdateCustomerAsync(Customer customer)
         {
             using (var conn = new NpgsqlConnection(_connectionString))
             {
@@ -94,12 +95,12 @@ namespace Project.Repository
                     command.Parameters.AddWithValue("LastName", customer.LastName);
                     command.Parameters.AddWithValue("Email", customer.Email);
                     command.Parameters.AddWithValue("Id", customer.Id);
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
         }
 
-        public void DeleteCustomer(Guid id)
+        public async Task DeleteCustomerAsync(Guid id)
         {
             using (var conn = new NpgsqlConnection(_connectionString))
             {
@@ -107,7 +108,7 @@ namespace Project.Repository
                 using (var command = new NpgsqlCommand("DELETE FROM \"Customer\" WHERE \"Id\" = @Id", conn))
                 {
                     command.Parameters.AddWithValue("Id", id);
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
         }

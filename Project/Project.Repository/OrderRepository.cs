@@ -1,9 +1,6 @@
 ﻿using Project.Common;
 using Project.Model;
-using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Npgsql;
 
 namespace Project.Repository
@@ -35,7 +32,7 @@ namespace Project.Repository
             if (filter.EndDate.HasValue)
                 query.Append(" AND \"OrderDate\" <= @EndDate");
             if (!string.IsNullOrEmpty(filter.SearchQuarry))
-                query.Append(" AND (\"Price\"::text ILIKE @SearchQuarry OR \"StateID\" ILIKE @SearchQuarry)"); // Example search columns
+                query.Append(" AND (\"Price\"::text ILIKE @SearchQuarry OR \"StateID\" ILIKE @SearchQuarry)");
 
             if (!string.IsNullOrEmpty(sort.OrderBy))
                 query.Append($" ORDER BY \"{sort.OrderBy}\" {(sort.SortOrder.ToLower() == "desc" ? "DESC" : "ASC")}");

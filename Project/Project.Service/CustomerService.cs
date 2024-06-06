@@ -1,5 +1,6 @@
 ﻿using Project.Model;
-using Project.Repository;
+using Project.Repository.Common;
+using Project.Service.Common;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,7 +28,6 @@ namespace Project.Service
 
         public async Task AddCustomerAsync(Customer customer)
         {
-            customer.Id = Guid.NewGuid();
             await _customerRepository.AddCustomerAsync(customer);
         }
 

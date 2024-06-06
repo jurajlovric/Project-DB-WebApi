@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Project.Service
+namespace Project.Service.Common
 {
     public interface ICustomerService
     {

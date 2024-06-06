@@ -3,24 +3,28 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Npgsql;
+using Microsoft.Extensions.Configuration;
+using Project.Repository.Common;
 
 namespace Project.Repository
 {
     public class CustomerRepository : ICustomerRepository
     {
-        private readonly string _connectionString;
+        private readonly IConfiguration _configuration;
 
-        public CustomerRepository(string connectionString)
+        public CustomerRepository(IConfiguration configuration)
         {
-            _connectionString = connectionString;
+            _configuration = configuration;
         }
+
+        private string ConnectionString => _configuration.GetConnectionString("DefaultConnection");
 
         public async Task<IEnumerable<Customer>> GetCustomersAsync()
         {
             var customers = new List<Customer>();
-            using (var conn = new NpgsqlConnection(_connectionString))
+            using (var conn = new NpgsqlConnection(ConnectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (var command = new NpgsqlCommand("SELECT * FROM \"Customer\"", conn))
                 using (var reader = await command.ExecuteReaderAsync())
                 {
@@ -42,9 +46,9 @@ namespace Project.Repository
         public async Task<Customer> GetCustomerByIdAsync(Guid id)
         {
             Customer customer = null;
-            using (var conn = new NpgsqlConnection(_connectionString))
+            using (var conn = new NpgsqlConnection(ConnectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (var command = new NpgsqlCommand("SELECT * FROM \"Customer\" WHERE \"Id\" = @Id", conn))
                 {
                     command.Parameters.AddWithValue("Id", id);
@@ -68,9 +72,9 @@ namespace Project.Repository
 
         public async Task AddCustomerAsync(Customer customer)
         {
-            using (var conn = new NpgsqlConnection(_connectionString))
+            using (var conn = new NpgsqlConnection(ConnectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (var command = new NpgsqlCommand(
                     "INSERT INTO \"Customer\" (\"Id\", \"FirstName\", \"LastName\", \"Email\") VALUES (@Id, @FirstName, @LastName, @Email)", conn))
                 {
@@ -85,9 +89,9 @@ namespace Project.Repository
 
         public async Task UpdateCustomerAsync(Customer customer)
         {
-            using (var conn = new NpgsqlConnection(_connectionString))
+            using (var conn = new NpgsqlConnection(ConnectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (var command = new NpgsqlCommand(
                     "UPDATE \"Customer\" SET \"FirstName\" = @FirstName, \"LastName\" = @LastName, \"Email\" = @Email WHERE \"Id\" = @Id", conn))
                 {
@@ -102,9 +106,9 @@ namespace Project.Repository
 
         public async Task DeleteCustomerAsync(Guid id)
         {
-            using (var conn = new NpgsqlConnection(_connectionString))
+            using (var conn = new NpgsqlConnection(ConnectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
                 using (var command = new NpgsqlCommand("DELETE FROM \"Customer\" WHERE \"Id\" = @Id", conn))
                 {
                     command.Parameters.AddWithValue("Id", id);

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Project.Common;
 using Project.Model;
-using Project.Service;
-using Project.Repository;
+using Project.Service.Common;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Project.WebApi.Controllers
 {
@@ -13,15 +15,13 @@ namespace Project.WebApi.Controllers
         private readonly ICustomerService _customerService;
         private readonly IOrderService _orderService;
 
-        public OrdersController()
+        public OrdersController(ICustomerService customerService, IOrderService orderService)
         {
-            string connectionString = "Host=localhost;Port=5432;Database=Order;User Id=postgres;Password=postgres;";
-            ICustomerRepository customerRepository = new CustomerRepository(connectionString);
-            _customerService = new CustomerService(customerRepository);
-
-            IOrderRepository orderRepository = new OrderRepository(connectionString);
-            _orderService = new OrderService(orderRepository);
+            _customerService = customerService;
+            _orderService = orderService;
         }
+
+        // Existing Customer Endpoints
 
         [HttpGet("customers")]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomersAsync()
@@ -69,6 +69,8 @@ namespace Project.WebApi.Controllers
             await _customerService.DeleteCustomerAsync(id);
             return NoContent();
         }
+
+        // New Order Endpoint
 
         [HttpGet("orders")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrdersAsync(

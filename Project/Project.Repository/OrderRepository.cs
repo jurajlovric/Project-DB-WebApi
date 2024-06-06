@@ -1,18 +1,25 @@
 ﻿using Project.Common;
 using Project.Model;
+using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Npgsql;
+using Microsoft.Extensions.Configuration;
+using Project.Repository.Common;
 
 namespace Project.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly string _connectionString;
+        private readonly IConfiguration _configuration;
 
-        public OrderRepository(string connectionString)
+        public OrderRepository(IConfiguration configuration)
         {
-            _connectionString = connectionString;
+            _configuration = configuration;
         }
+
+        private string ConnectionString => _configuration.GetConnectionString("DefaultConnection");
 
         public async Task<IEnumerable<Order>> GetOrdersAsync(FilterParameters filter, SortParameters sort, PageParameters page)
         {
@@ -32,14 +39,14 @@ namespace Project.Repository
             if (filter.EndDate.HasValue)
                 query.Append(" AND \"OrderDate\" <= @EndDate");
             if (!string.IsNullOrEmpty(filter.SearchQuarry))
-                query.Append(" AND (\"Price\"::text ILIKE @SearchQuarry OR \"StateID\" ILIKE @SearchQuarry)");
+                query.Append(" AND (\"Price\"::text ILIKE @SearchQuarry OR \"StateID\" ILIKE @SearchQuarry)"); // Example search columns
 
             if (!string.IsNullOrEmpty(sort.OrderBy))
                 query.Append($" ORDER BY \"{sort.OrderBy}\" {(sort.SortOrder.ToLower() == "desc" ? "DESC" : "ASC")}");
 
             query.Append(" OFFSET @Offset LIMIT @Limit");
 
-            using (var conn = new NpgsqlConnection(_connectionString))
+            using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 await conn.OpenAsync();
                 using (var command = new NpgsqlCommand(query.ToString(), conn))

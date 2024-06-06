@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Project.Repository
+namespace Project.Service.Common
 {
-    public interface ICustomerRepository
+    public interface ICustomerService
     {
         Task<IEnumerable<Customer>> GetCustomersAsync();
         Task<Customer> GetCustomerByIdAsync(Guid id);

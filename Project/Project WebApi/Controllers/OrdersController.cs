@@ -29,17 +29,17 @@ namespace Project.WebApi.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetOrderRest>>> GetOrdersAsync(
-            [FromQuery] string stateId = null,
-            [FromQuery] decimal? minPrice = null,
-            [FromQuery] decimal? maxPrice = null,
-            [FromQuery] DateTime? startDate = null,
-            [FromQuery] DateTime? endDate = null,
-            [FromQuery] Guid? conditionId = null,
-            [FromQuery] string searchQuarry = null,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string orderBy = "OrderDate",
-            [FromQuery] string sortOrder = "asc")
+            string stateId = null,
+            decimal? minPrice = null,
+            decimal? maxPrice = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            Guid? conditionId = null,
+            string searchQuarry = null,
+            int pageNumber = 1,
+            int pageSize = 10,
+            string orderBy = "OrderDate",
+            string sortOrder = "asc")
         {
             var filter = new FilterParameters
             {

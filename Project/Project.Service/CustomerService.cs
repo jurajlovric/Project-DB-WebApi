@@ -1,9 +1,6 @@
 ﻿using Project.Model;
 using Project.Repository.Common;
 using Project.Service.Common;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Project.Service
 {
@@ -40,7 +37,11 @@ namespace Project.Service
                 throw new ArgumentException("Customer not found");
             }
 
-            await _customerRepository.UpdateCustomerAsync(customer);
+            existingCustomer.FirstName = customer.FirstName ?? existingCustomer.FirstName;
+            existingCustomer.LastName = customer.LastName ?? existingCustomer.LastName;
+            existingCustomer.Email = customer.Email ?? existingCustomer.Email;
+
+            await _customerRepository.UpdateCustomerAsync(existingCustomer);
         }
 
         public async Task DeleteCustomerAsync(Guid id)

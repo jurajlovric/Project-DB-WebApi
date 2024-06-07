@@ -1,9 +1,7 @@
 ﻿using Project.Common;
 using Project.Model;
 using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Npgsql;
 using Microsoft.Extensions.Configuration;
 using Project.Repository.Common;

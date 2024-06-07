@@ -1,9 +1,6 @@
 ﻿using Project.Model;
 using Project.Repository.Common;
 using Project.Service.Common;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Project.Service
 {

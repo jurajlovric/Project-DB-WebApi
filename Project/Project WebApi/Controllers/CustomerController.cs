@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Project.Model;
 using Project.Service.Common;
 
@@ -9,43 +10,82 @@ namespace Project.WebApi.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerService _customerService;
+        private readonly IMapper _mapper;
 
-        public CustomersController(ICustomerService customerService)
+        public CustomersController(ICustomerService customerService, IMapper mapper)
         {
             _customerService = customerService;
+            _mapper = mapper;
+        }
+        public class GetCustomerRest
+        {
+            public Guid Id { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Email { get; set; }
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomersAsync()
+        public async Task<ActionResult<IEnumerable<GetCustomerRest>>> GetCustomersAsync()
         {
-            return Ok(await _customerService.GetCustomersAsync());
+            var customers = await _customerService.GetCustomersAsync();
+            var customerRests = _mapper.Map<IEnumerable<GetCustomerRest>>(customers);
+            return Ok(customerRests);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomerAsync(Guid id)
+        public async Task<ActionResult<GetCustomerRest>> GetCustomerAsync(Guid id)
         {
             var customer = await _customerService.GetCustomerByIdAsync(id);
             if (customer == null)
             {
                 return NotFound();
             }
-            return Ok(customer);
+            var customerRest = _mapper.Map<GetCustomerRest>(customer);
+            return Ok(customerRest);
+        }
+        public class PostCustomerRest
+        {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Email { get; set; }
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomerAsync(Customer customer)
+        public async Task<ActionResult<GetCustomerRest>> PostCustomerAsync([FromBody] PostCustomerRest postCustomerRest)
         {
+            if (postCustomerRest == null)
+            {
+                return BadRequest("Customer data is null");
+            }
+
+            var customer = _mapper.Map<Customer>(postCustomerRest);
             await _customerService.AddCustomerAsync(customer);
-            return Created(string.Empty, customer);
+            var customerRest = _mapper.Map<GetCustomerRest>(customer);
+            return Created(string.Empty, customerRest);
+        }
+        public class PutCustomerRest
+        {
+            public Guid Id { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Email { get; set; }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerAsync(Guid id, Customer customer)
+        public async Task<IActionResult> PutCustomerAsync(Guid id, [FromBody] PutCustomerRest putCustomerRest)
         {
-            if (id != customer.Id)
+            if (putCustomerRest == null)
+            {
+                return BadRequest("Customer data is null");
+            }
+
+            if (id != putCustomerRest.Id)
             {
                 return BadRequest();
             }
+
+            var customer = _mapper.Map<Customer>(putCustomerRest);
 
             try
             {
@@ -57,6 +97,10 @@ namespace Project.WebApi.Controllers
             }
 
             return NoContent();
+        }
+        public class DeleteCustomerRest
+        {
+            public Guid Id { get; set; }
         }
 
         [HttpDelete("{id}")]

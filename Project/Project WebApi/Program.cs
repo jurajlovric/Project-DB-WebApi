@@ -1,15 +1,20 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Project.Repository;
 using Project.Repository.Common;
 using Project.Service;
 using Project.Service.Common;
+using Microsoft.Extensions.Configuration;
+using Project.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Configuration
        .SetBasePath(Directory.GetCurrentDirectory())

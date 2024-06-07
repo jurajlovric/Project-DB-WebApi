@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Project.Common;
-using Project.Model;
 using Project.Service.Common;
 
 namespace Project.WebApi.Controllers
@@ -10,25 +10,36 @@ namespace Project.WebApi.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly IMapper _mapper;
 
-        public OrdersController(IOrderService orderService)
+        public OrdersController(IOrderService orderService, IMapper mapper)
         {
             _orderService = orderService;
+            _mapper = mapper;
+        }
+        public class GetOrderRest
+        {
+            public Guid Id { get; set; }
+            public Guid CustomerId { get; set; }
+            public DateTime OrderDate { get; set; }
+            public decimal Price { get; set; }
+            public string StateID { get; set; }
+            public Guid? ConditionID { get; set; }
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrdersAsync(
-            string stateId = null,
-            decimal? minPrice = null,
-            decimal? maxPrice = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null,
-            Guid? conditionId = null,
-            string searchQuarry = null,
-            int pageNumber = 1,
-            int pageSize = 10,
-            string orderBy = "OrderDate",
-            string sortOrder = "asc")
+        public async Task<ActionResult<IEnumerable<GetOrderRest>>> GetOrdersAsync(
+            [FromQuery] string stateId = null,
+            [FromQuery] decimal? minPrice = null,
+            [FromQuery] decimal? maxPrice = null,
+            [FromQuery] DateTime? startDate = null,
+            [FromQuery] DateTime? endDate = null,
+            [FromQuery] Guid? conditionId = null,
+            [FromQuery] string searchQuarry = null,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string orderBy = "OrderDate",
+            [FromQuery] string sortOrder = "asc")
         {
             var filter = new FilterParameters
             {
@@ -54,7 +65,8 @@ namespace Project.WebApi.Controllers
             };
 
             var orders = await _orderService.GetOrdersAsync(filter, sort, page);
-            return Ok(orders);
+            var orderRests = _mapper.Map<IEnumerable<GetOrderRest>>(orders);
+            return Ok(orderRests);
         }
     }
 }

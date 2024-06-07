@@ -28,11 +28,18 @@ namespace Project.Service
 
         public async Task AddCustomerAsync(Customer customer)
         {
+            customer.Id = Guid.NewGuid();
             await _customerRepository.AddCustomerAsync(customer);
         }
 
         public async Task UpdateCustomerAsync(Customer customer)
         {
+            var existingCustomer = await _customerRepository.GetCustomerByIdAsync(customer.Id);
+            if (existingCustomer == null)
+            {
+                throw new ArgumentException("Customer not found");
+            }
+
             await _customerRepository.UpdateCustomerAsync(customer);
         }
 

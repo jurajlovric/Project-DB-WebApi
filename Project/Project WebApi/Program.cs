@@ -4,7 +4,6 @@ using Project.Repository;
 using Project.Repository.Common;
 using Project.Service;
 using Project.Service.Common;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,9 +34,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

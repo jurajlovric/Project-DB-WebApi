@@ -66,10 +66,9 @@ namespace Project.WebApi.Controllers
         }
         public class PutCustomerRest
         {
-            public Guid Id { get; set; }
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public string Email { get; set; }
+            public string? FirstName { get; set; }
+            public string? LastName { get; set; }
+            public string? Email { get; set; }
         }
 
         [HttpPut("{id}")]
@@ -80,16 +79,30 @@ namespace Project.WebApi.Controllers
                 return BadRequest("Customer data is null");
             }
 
-            if (id != putCustomerRest.Id)
+            var existingCustomer = await _customerService.GetCustomerByIdAsync(id);
+            if (existingCustomer == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            var customer = _mapper.Map<Customer>(putCustomerRest);
+            if (putCustomerRest.FirstName != null)
+            {
+                existingCustomer.FirstName = putCustomerRest.FirstName;
+            }
+
+            if (putCustomerRest.LastName != null)
+            {
+                existingCustomer.LastName = putCustomerRest.LastName;
+            }
+
+            if (putCustomerRest.Email != null)
+            {
+                existingCustomer.Email = putCustomerRest.Email;
+            }
 
             try
             {
-                await _customerService.UpdateCustomerAsync(customer);
+                await _customerService.UpdateCustomerAsync(existingCustomer);
             }
             catch (ArgumentException)
             {

@@ -5,7 +5,6 @@ using Project.Repository;
 using Project.Repository.Common;
 using Project.Service;
 using Project.Service.Common;
-using Microsoft.Extensions.Configuration;
 using Project.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);

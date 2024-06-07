@@ -18,8 +18,6 @@ namespace Project.WebApi.Controllers
             _orderService = orderService;
         }
 
-        // Existing Customer Endpoints
-
         [HttpGet("customers")]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomersAsync()
         {
@@ -66,8 +64,6 @@ namespace Project.WebApi.Controllers
             await _customerService.DeleteCustomerAsync(id);
             return NoContent();
         }
-
-        // New Order Endpoint
 
         [HttpGet("orders")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrdersAsync(

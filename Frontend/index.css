@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e8f5e9; 
+}
+
+nav {
+    background-color: #388e3c;
+    color: #fff;
+    padding: 10px 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+.content {
+    text-align: center;
+    padding: 50px;
+}
+
+img {
+    margin-top: 20px;
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #388e3c;
+    border-radius: 8px;
+}

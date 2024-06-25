@@ -1,91 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import seedData from './seedData';
+import React, { Component } from 'react';
+import { getCustomers, addCustomer, updateCustomer, deleteCustomer } from './customerService';
 import CustomerForm from './CustomerForm';
-import CustomerTableBody from './CustomerTableBody';
+import CustomerTable from './CustomerTable';
 import EditCustomerForm from './EditCustomerForm';
 import './Customer.css';
 
-function Customer() {
-  const [customers, setCustomers] = useState([]);
-  const [editingCustomer, setEditingCustomer] = useState(null);
-
-  useEffect(() => {
-    const storedCustomers = JSON.parse(localStorage.getItem('customers'));
-    if (storedCustomers && storedCustomers.length > 0) {
-      setCustomers(storedCustomers);
-    } else {
-      setCustomers(seedData);
+class Customer extends Component {
+  state = {
+    customers: [],
+    editingCustomer: null,
+    formData: {
+      firstName: '',
+      lastName: '',
+      email: ''
     }
-  }, []);
+  };
 
-  useEffect(() => {
-    localStorage.setItem('customers', JSON.stringify(customers));
-  }, [customers]);
+  componentDidMount() {
+    this.loadCustomers();
+  }
 
-  const handleFormSubmit = (event) => {
+  loadCustomers = () => {
+    getCustomers()
+      .then(response => {
+        this.setState({ customers: response.data });
+      })
+      .catch(error => {
+        console.error('There was an error fetching the customers!', error);
+      });
+  };
+
+  handleFormSubmit = (event) => {
     event.preventDefault();
-    const id = event.target.customerId.value;
-    const name = event.target.customerName.value;
-    const email = event.target.customerEmail.value;
+    const { firstName, lastName, email } = this.state.formData;
 
-    const customerIndex = customers.findIndex(customer => customer.id === id);
-
-    if (customerIndex === -1) {
-      setCustomers([...customers, { id, name, email }]);
-    } else {
-      const updatedCustomers = customers.map((customer, index) => 
-        index === customerIndex ? { id, name, email } : customer
-      );
-      setCustomers(updatedCustomers);
-    }
-
-    event.target.reset();
+    addCustomer({ firstName, lastName, email })
+      .then(() => {
+        this.loadCustomers();
+        this.setState({ formData: { firstName: '', lastName: '', email: '' } });
+      })
+      .catch(error => {
+        console.error('There was an error adding the customer!', error);
+      });
   };
 
-  const handleEdit = (id) => {
-    const customer = customers.find(c => c.id === id);
-    setEditingCustomer(customer);
+  handleEdit = (id) => {
+    const customer = this.state.customers.find(c => c.id === id);
+    this.setState({ editingCustomer: customer, formData: customer });
   };
 
-  const handleDelete = (id) => {
-    const updatedCustomers = customers.filter(customer => customer.id !== id);
-    setCustomers(updatedCustomers);
+  handleDelete = (id) => {
+    deleteCustomer(id)
+      .then(() => {
+        this.loadCustomers();
+      })
+      .catch(error => {
+        console.error('There was an error deleting the customer!', error);
+      });
   };
 
-  const handleSave = (updatedCustomer) => {
-    const updatedCustomers = customers.map(customer => 
-      customer.id === updatedCustomer.id ? updatedCustomer : customer
+  handleSave = (updatedCustomer) => {
+    updateCustomer(updatedCustomer.id, updatedCustomer)
+      .then(() => {
+        this.loadCustomers();
+        this.setState({
+          editingCustomer: null,
+          formData: { firstName: '', lastName: '', email: '' }
+        });
+      })
+      .catch(error => {
+        console.error('There was an error saving the customer!', error);
+      });
+  };
+
+  handleInputChange = (event) => {
+    const { name, value } = event.target;
+    this.setState(prevState => ({
+      formData: {
+        ...prevState.formData,
+        [name]: value
+      }
+    }));
+  };
+
+  render() {
+    return (
+      <div className="content">
+        <nav>
+          <ul>
+            <li><a href="/customers">Customers</a></li>
+          </ul>
+        </nav>
+        <h1>Customers</h1>
+        <CustomerForm
+          formData={this.state.formData}
+          handleInputChange={this.handleInputChange}
+          handleFormSubmit={this.handleFormSubmit}
+        />
+        <CustomerTable
+          customers={this.state.customers}
+          handleEdit={this.handleEdit}
+          handleDelete={this.handleDelete}
+        />
+        {this.state.editingCustomer && (
+          <EditCustomerForm
+            formData={this.state.formData}
+            handleInputChange={this.handleInputChange}
+            handleSave={this.handleSave}
+          />
+        )}
+      </div>
     );
-    setCustomers(updatedCustomers);
-    setEditingCustomer(null);
-  };
-
-  return (
-    <div className="content">
-      <nav>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/customers">Customers</a></li>
-          <li><a href="/orders">Orders</a></li>
-          <li><a href="/form">Add Customer</a></li>
-        </ul>
-      </nav>
-      <h1>Customers</h1>
-      <CustomerForm onSubmit={handleFormSubmit} />
-      <table>
-        <thead>
-          <tr>
-            <th>Customer ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <CustomerTableBody customers={customers} onEdit={handleEdit} onDelete={handleDelete} />
-      </table>
-      {editingCustomer && <EditCustomerForm customer={editingCustomer} onSave={handleSave} />}
-    </div>
-  );
+  }
 }
 
 export default Customer;

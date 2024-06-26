@@ -18,4 +18,9 @@ const deleteCustomer = (id) => {
   return axios.delete(`${API_URL}/${id}`);
 };
 
-export { getCustomers, addCustomer, updateCustomer, deleteCustomer };
+// Dodajemo getCustomerById
+const getCustomerById = (id) => {
+  return axios.get(`${API_URL}/${id}`);
+};
+
+export { getCustomers, addCustomer, updateCustomer, deleteCustomer, getCustomerById };

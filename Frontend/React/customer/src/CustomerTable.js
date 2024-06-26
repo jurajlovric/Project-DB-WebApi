@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-function CustomerTable({ customers, handleEdit, handleDelete }) {
+function CustomerTable({ customers, handleDelete }) {
   return (
     <table>
       <thead>
@@ -12,7 +13,7 @@ function CustomerTable({ customers, handleEdit, handleDelete }) {
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody id="customerTableBody">
+      <tbody>
         {customers.map((customer) => (
           <tr key={customer.id}>
             <td>{customer.id}</td>
@@ -20,7 +21,9 @@ function CustomerTable({ customers, handleEdit, handleDelete }) {
             <td>{customer.lastName}</td>
             <td>{customer.email}</td>
             <td>
-              <button onClick={() => handleEdit(customer.id)}>Edit</button>
+              <Link to={`/edit/${customer.id}`}>
+                <button>Edit</button>
+              </Link>
               <button onClick={() => handleDelete(customer.id)}>Delete</button>
             </td>
           </tr>

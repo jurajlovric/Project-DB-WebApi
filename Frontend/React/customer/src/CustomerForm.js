@@ -4,10 +4,10 @@ function CustomerForm({ formData, handleInputChange, handleFormSubmit }) {
   return (
     <form id="customerForm" onSubmit={handleFormSubmit}>
       <div className="form-group">
-        <label htmlFor="customerFirstName">First Name:</label>
+        <label htmlFor="firstName">First Name:</label>
         <input
           type="text"
-          id="customerFirstName"
+          id="firstName"
           name="firstName"
           value={formData.firstName}
           onChange={handleInputChange}
@@ -15,10 +15,10 @@ function CustomerForm({ formData, handleInputChange, handleFormSubmit }) {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="customerLastName">Last Name:</label>
+        <label htmlFor="lastName">Last Name:</label>
         <input
           type="text"
-          id="customerLastName"
+          id="lastName"
           name="lastName"
           value={formData.lastName}
           onChange={handleInputChange}
@@ -26,10 +26,10 @@ function CustomerForm({ formData, handleInputChange, handleFormSubmit }) {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="customerEmail">Email:</label>
+        <label htmlFor="email">Email:</label>
         <input
           type="email"
-          id="customerEmail"
+          id="email"
           name="email"
           value={formData.email}
           onChange={handleInputChange}
